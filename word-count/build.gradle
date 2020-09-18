@@ -1,0 +1,37 @@
+plugins {
+    id 'java'
+    id 'application'
+    // shadow plugin to produce fat JARs
+    id 'com.github.johnrengelman.shadow'
+}
+
+group 'com.honlyc.flink-learning'
+version '0.1-SNAPSHOT'
+mainClassName = 'com.honlyc.flink.WordCountJob'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    // --------------------------------------------------------------
+    // 编译时依赖不应该包含在 shadow jar 中，
+    // 这些依赖会在 Flink 的 lib 目录中提供。
+    // --------------------------------------------------------------
+    compile "org.apache.flink:flink-java:${flinkVersion}"
+    compile "org.apache.flink:flink-streaming-java_${scalaBinaryVersion}:${flinkVersion}"
+    compile "org.apache.flink:flink-clients_${scalaBinaryVersion}:${flinkVersion}"
+
+    // --------------------------------------------------------------
+    // 应该包含在 shadow jar 中的依赖，例如：连接器。
+    // 它们必须在 flinkShadowJar 的配置中！
+    // --------------------------------------------------------------
+    //flinkShadowJar "org.apache.flink:flink-connector-kafka-0.11_${scalaBinaryVersion}:${flinkVersion}"
+
+    compile "log4j:log4j:${log4jVersion}"
+    compile "org.slf4j:slf4j-log4j12:${slf4jVersion}"
+
+    // Add test dependencies here.
+    // testCompile "junit:junit:4.12"
+}
